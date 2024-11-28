@@ -111,3 +111,40 @@ export const getAppliedJobs = async (req, res) => {
   }
 };
 
+// Check if the user has already applied for a job
+export async function checkJobApplied(req, res) {
+  try {
+    const userId = req.user?.userId; // Lấy userId từ token (đăng nhập)
+
+    if (!userId) {
+      return res.status(401).json({ code: 'UNAUTHORIZED', message: 'User not logged in' });
+    }
+
+    const jobId = req.params.jobId;
+
+    // Tìm hồ sơ ứng viên
+    const applicantProfile = await ApplicantProfile.findOne({ where: { user_id: userId } });
+    if (!applicantProfile) {
+      return res.status(404).json({ code: 'PROFILE_NOT_FOUND', message: 'Applicant profile not found' });
+    }
+
+    // Kiểm tra nếu đã apply
+    const application = await Applicant.findOne({
+      where: {
+        applicant_profile_id: applicantProfile.id,
+        job_id: jobId,
+      },
+    });
+
+    if (application) {
+      return res.json({ applied: true });
+    }
+
+    return res.json({ applied: false });
+  } catch (error) {
+    console.error('Error checking job application status:', error);
+    return res.status(500).json({ code: 'SERVER_ERROR', message: 'Internal server error' });
+  }
+}
+
+

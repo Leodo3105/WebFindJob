@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import { createJob, getJobs, getJobById, updateJob, deleteJob } from '../controllers/employer/jobController.js';
+import { checkJobApplied } from '../controllers/applicant/applyController.js';
 import { authenticateToken, authorizeRole } from '../middleware/auth.js';
 
 // Route để tạo công việc mới
@@ -17,5 +18,7 @@ router.put('/update/:id', authenticateToken, authorizeRole('employer'), updateJo
 
 // Route để xóa công việc
 router.delete('/delete/:id', authenticateToken, authorizeRole('employer'), deleteJob);
+
+router.get('/:jobId/check-applied', authenticateToken, authorizeRole('applicant'), checkJobApplied);
 
 export default router;
