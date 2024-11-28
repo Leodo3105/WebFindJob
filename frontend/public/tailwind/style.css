@@ -1,0 +1,12 @@
+@import 'tailwindcss/base';
+@import '/base/global.css';
+
+@import 'tailwindcss/components';
+@import 'layout/header.css';
+@import 'components/card.css';
+@import 'components/button.css';
+@import 'components/form.css';
+
+@import 'tailwindcss/utilities';
+@import 'pages/home.css';
+@import 'pages/job-details.css';
