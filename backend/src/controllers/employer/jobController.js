@@ -1,6 +1,7 @@
 import Job from '../../models/job.js';
 import JobType from '../../models/job_type.js';
-import Op from 'sequelize'; 
+import EmployerProfile from '../../models/employer_profile.js';
+import City from '../../models/city.js';
 
 // Tạo công việc mới
 export async function createJob(req, res) {
@@ -23,12 +24,26 @@ export async function getJobs(req, res) {
             where.title = { [Op.iLike]: `%${title}%` };
         }
         if (company_name) {
-            where.company_name = { [Op.iLike]: `%${company_name}%` };
+            where['$EmployerProfile.company_name$'] = { [Op.iLike]: `%${company_name}%` };
         }
 
         const jobs = await Job.findAll({
             where,
-            include: { model: JobType, attributes: ['name'] },
+            include: [
+                {
+                    model: JobType, // Lấy loại công việc
+                    attributes: ['name'],
+                },
+                {
+                    model: EmployerProfile, // Liên kết với bảng employer_profile
+                    as: 'employer',
+                    attributes: ['logo', 'company_name'], // Lấy các trường logo và company_name
+                },
+                {
+                    model: City, // Liên kết với bảng city
+                    attributes: ['name'], // Lấy trường name
+                },
+            ],
         });
 
         if (jobs.length === 0) {
@@ -39,27 +54,15 @@ export async function getJobs(req, res) {
 
         if (userId) {
             const applicantProfile = await ApplicantProfile.findOne({ where: { user_id: userId } });
-            console.log('Applicant Profile:', applicantProfile);
             if (applicantProfile) {
                 const applications = await Applicant.findAll({
                     where: { applicant_profile_id: applicantProfile.id },
                     attributes: ['job_id'],
                 });
-                console.log('Applications:', applications);
                 const appliedJobIds = new Set(applications.map((app) => Number(app.job_id)));
 
                 jobs.forEach((job) => {
                     job.dataValues.applied = appliedJobIds.has(Number(job.id));
-                });
-
-                console.log('User ID:', userId);
-                console.log('Applicant Profile ID:', applicantProfile.id);
-                console.log('Applied Job IDs:', appliedJobIds);
-
-                jobs.forEach((job) => {
-                    console.log(`Checking job ID: ${job.id}`);
-                    job.dataValues.applied = appliedJobIds.includes(Number(job.id));
-                    console.log(`Job ${job.id} applied status: ${job.dataValues.applied}`);
                 });
             }
         } else {
@@ -76,11 +79,27 @@ export async function getJobs(req, res) {
 }
 
 
+
 // Lấy chi tiết một công việc
 export async function getJobById(req, res) {
     try {
+        // Tìm job theo ID và bao gồm các bảng liên quan
         const job = await Job.findByPk(req.params.id, {
-            include: { model: JobType, attributes: ['name'] },
+            include: [
+                {
+                    model: JobType, // Loại công việc
+                    attributes: ['name'],
+                },
+                {
+                    model: EmployerProfile, // Thông tin nhà tuyển dụng
+                    attributes: ['logo', 'company_name'], // Chỉ lấy logo và company_name
+                    as: 'employer', // Alias nếu có
+                },
+                {
+                    model: City, // Thông tin thành phố
+                    attributes: ['name'], // Lấy tên thành phố
+                },
+            ],
         });
 
         if (!job) {
