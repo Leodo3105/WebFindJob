@@ -3,6 +3,9 @@ import EmployerProfile from '../../models/employer_profile.js';
 import Applicant from '../../models/applicant.js';
 import Job from '../../models/job.js';
 import User from '../../models/user.js';
+import Country from '../../models/country.js';
+import City from '../../models/city.js';
+import District from '../../models/district.js';
 
 // Cập nhật thông tin hồ sơ của Employer
 export const updateProfile = async (req, res) => {
@@ -31,6 +34,46 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: 'An error occurred while updating the profile', error });
   }
 };
+
+export const getEmployerProfile = async (req, res) => {
+  const { userId } = req.params; // Lấy userId từ URL
+
+  try {
+    // Tìm kiếm hồ sơ employer dựa trên userId
+    const employerProfile = await EmployerProfile.findOne({
+      where: { user_id: userId },
+      include: [
+        {
+          model: District, // Bao gồm thông tin về quận
+          attributes: ['name'],
+        },
+        {
+          model: City, // Bao gồm thông tin về thành phố
+          attributes: ['name'],
+        },
+        {
+          model: Country, // Bao gồm thông tin về quốc gia
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    // Nếu không tìm thấy hồ sơ employer
+    if (!employerProfile) {
+      return res.status(404).json({ message: 'Employer profile not found' });
+    }
+
+    // Trả về hồ sơ employer
+    res.status(200).json({
+      message: 'Profile retrieved successfully',
+      profile: employerProfile,
+    });
+  } catch (error) {
+    console.error('Error retrieving employer profile:', error); // Log lỗi chi tiết
+    res.status(500).json({ message: 'An error occurred while retrieving the profile', error });
+  }
+};
+
 
 // Retrieve list of applicants for a specific job
 export const getApplicantsForJob = async (req, res) => {

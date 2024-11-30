@@ -1,4 +1,7 @@
 import ApplicantProfiles from '../../models/applicant_profile.js';
+import Country from '../../models/country.js';
+import City from '../../models/city.js';
+import District from '../../models/district.js';
 
 export const updateProfile = async (req, res) => {
   const { userId } = req.params;
@@ -36,5 +39,44 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error('Error updating profile:', error); // Log lỗi chi tiết
     res.status(500).json({ message: 'An error occurred while updating the profile', error });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  const { userId } = req.params; // Lấy userId từ request params
+
+  try {
+    // Tìm kiếm hồ sơ ứng viên (ApplicantProfile) dựa trên userId
+    const applicantProfile = await ApplicantProfiles.findOne({
+      where: { user_id: userId },
+      include: [
+        {
+          model: District, // Bao gồm thông tin về quận
+          attributes: ['name'],
+        },
+        {
+          model: City, // Bao gồm thông tin về thành phố
+          attributes: ['name'],
+        },
+        {
+          model: Country, // Bao gồm thông tin về quốc gia
+          attributes: ['name'],
+        },
+      ],
+    });
+
+    // Nếu không tìm thấy hồ sơ ứng viên
+    if (!applicantProfile) {
+      return res.status(404).json({ message: 'Applicant profile not found' });
+    }
+
+    // Trả về hồ sơ ứng viên
+    res.status(200).json({
+      message: 'Profile retrieved successfully',
+      profile: applicantProfile,
+    });
+  } catch (error) {
+    console.error('Error retrieving profile:', error); // Log lỗi chi tiết
+    res.status(500).json({ message: 'An error occurred while retrieving the profile', error });
   }
 };
