@@ -8,9 +8,12 @@ import 'swiper/css'
 import "swiper/css/autoplay"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
+// import { store } from "../features/store"
 // import Cursor from '@components/elements/Cursor'
 
-
+let persistor = persistStore(store);
 // const inter = rubik({ subsets: ['latin'] })
 const rubik = Rubik({
     weight: ['300', '400', '500', '600', '700'],
@@ -29,7 +32,9 @@ export default function RootLayout({ children }) {
             <body className={rubik.className}>
                 {/* <Cursor /> */}
                 <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
                     {children}
+                </PersistGate>
                 </Provider>
             </body>
         </html>

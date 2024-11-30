@@ -1,4 +1,3 @@
-
 import Layout from "@components/layout/landing/Layout"
 import Banner1 from "@components/sections/Banner1"
 import BlogSection1 from "@components/sections/blog/BlogSection1"

@@ -5,9 +5,9 @@ import { applyJob, getAppliedJobs  } from '../controllers/applicant/applyControl
 import { authenticateToken, authorizeRole } from '../middleware/auth.js'; // Middleware xác thực và phân quyền
 
 // Route để cập nhật hồ sơ ứng viên
-router.put('/profile/update/:userId', authenticateToken, authorizeRole('applicant'), updateProfile);
+router.put('/profile/update', authenticateToken, authorizeRole('applicant'), updateProfile);
 
-router.get('/profile/:userId', getProfile);
+router.get('/profile', authenticateToken, authorizeRole('applicant'), getProfile);
 
 // Route để ứng tuyển công việc
 router.post('/apply/:jobId', authenticateToken, authorizeRole('applicant'), applyJob);

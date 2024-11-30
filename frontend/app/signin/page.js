@@ -4,23 +4,38 @@ import { useRouter } from "next/navigation";
 import { login } from "@features/auth/auth"; // Đường dẫn đến API đăng nhập
 import Image from "next/image";
 import Link from "next/link";
+import { setRole, setToken } from "@features/auth/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import getMyProfile from "@api/profile/getMyProfile";
+import { setProfile } from "@features/profile/profileSlice";
 
 const page = () => {
     const [email, setEmail] = useState(""); // Quản lý email
     const [password, setPassword] = useState(""); // Quản lý password
     const [error, setError] = useState(""); // Quản lý lỗi
     const router = useRouter(); // Điều hướng trang sau khi đăng nhập thành công
+    const dispatch = useDispatch();
 
     // Xử lý gửi form đăng nhập
     const handleSubmit = async (e) => {
         e.preventDefault(); // Ngăn form tự động reload
         try {
             // Gửi yêu cầu đăng nhập đến API
-            const { token, hasProfile } = await login(email, password); // `hasProfile` là giá trị từ backend trả về
+            const { token, role } = await login(email, password); // `hasProfile` là giá trị từ backend trả về
     
             // Lưu token vào localStorage
             localStorage.setItem("token", token);
-    
+
+            dispatch(setToken(token));
+            dispatch(setRole(role));
+
+            getMyProfile({ token })
+                .then(res => {
+                    dispatch(setProfile(res.profile));
+                })
+                .catch(e => {
+                    console.log(e);
+                })
             router.push("/");
         } catch (err) {
             // Xử lý lỗi và hiển thị thông báo

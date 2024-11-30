@@ -1,5 +1,5 @@
 'use client'
-import jobs from "@/data/jobs"
+// import jobs from "@/data/jobs"
 import {
     addCategory,
     addDatePosted,
@@ -18,15 +18,18 @@ import {
     clearExperienceToggle,
     clearJobTypeToggle,
 } from "@/features/job/jobSlice"
+import getAllJob from "@api/job/getAllJob"
 import JobGrid1 from "@components/elements/job/JobGrid1"
 import FilterSidebar from '@components/filter/FilterSidebar'
 import Layout from "@components/layout/landing/Layout"
 import NewsletterSection1 from "@components/sections/newsletter/Newsletter1"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 // export const metadata = {
 //     title: 'Prexjob | Job Board Nextjs Tailwindcss Listing Directory Template',
 // }
 const Jobs = () => {
+    const [ jobs, setJobs ] = useState([]);
     const { jobList, jobSort } = useSelector((state) => state.filter)
     // console.log(jobs);
     const {
@@ -114,18 +117,27 @@ const Jobs = () => {
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1
 
+
+    useEffect(() => {
+        getAllJob()
+            .then(res => {
+                setJobs(res.jobs);
+            })
+            .catch()
+    }, []);
+
     let content = jobs
-        ?.filter(keywordFilter)
-        ?.filter(locationFilter)
-        ?.filter(destinationFilter)
-        ?.filter(categoryFilter)
-        ?.filter(jobTypeFilter)
-        ?.filter(datePostedFilter)
-        ?.filter(experienceFilter)
-        ?.filter(salaryFilter)
-        ?.filter(tagFilter)
-        ?.sort(sortFilter)
-        .slice(perPage.start, perPage.end !== 0 ? perPage.end : 10)
+        // ?.filter(keywordFilter)
+        // ?.filter(locationFilter)
+        // ?.filter(destinationFilter)
+        // ?.filter(categoryFilter)
+        // ?.filter(jobTypeFilter)
+        // ?.filter(datePostedFilter)
+        // ?.filter(experienceFilter)
+        // ?.filter(salaryFilter)
+        // ?.filter(tagFilter)
+        // ?.sort(sortFilter)
+        // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 10)
         ?.map((item, i) => (
             <JobGrid1 item={item} key={i} />
         ))

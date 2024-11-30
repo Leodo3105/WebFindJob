@@ -134,7 +134,7 @@ export const login = async (req, res) => {
         applicant_profile_id: applicantProfileId, // Thêm applicant_profile_id vào payload
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '30d' }
     );
 
     res.status(200).json({ message: 'Login successful', token, role: user.role });

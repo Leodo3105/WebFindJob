@@ -16,10 +16,17 @@ import Header2 from './header/Header2'
 import Header3 from './header/Header3'
 import Header4 from './header/Header4'
 import Header5 from './header/Header5'
-const Layout = ({ headerStyle, footerStyle, children, headerBg, breadcrumbTitle, breadcrumbSubTitle, breadcrumbAlign }) => {
+// import { setShowPopupMyProfile } from '@features/profile/profileSlice';
+import PopupMyProfile from '@components/popupMyProfile';
+import { useSelector } from 'react-redux'
 
+
+
+const Layout = ({ headerStyle, footerStyle, children, headerBg, breadcrumbTitle, breadcrumbSubTitle, breadcrumbAlign }) => {
     const [isToggled, setToggled] = useState(false)
     const handleToggle = () => setToggled(!isToggled)
+    const {showPopupMyProfile} = useSelector(state => state.profile); 
+   
 
     const [scroll, setScroll] = useState(0)
     useEffect(() => {
@@ -38,6 +45,10 @@ const Layout = ({ headerStyle, footerStyle, children, headerBg, breadcrumbTitle,
 
     return (
         <>
+            {
+                showPopupMyProfile && 
+                    <PopupMyProfile/>
+            }
             <DataBg />
             <SvgIcon />
             {!headerStyle && <Header3 isToggled={isToggled} handleToggle={handleToggle} scroll={scroll} />}

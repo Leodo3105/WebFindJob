@@ -4,10 +4,10 @@ import City from '../../models/city.js';
 import District from '../../models/district.js';
 
 export const updateProfile = async (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.user;
   const {
     fullname, date_of_birth, phone, address, district_id, city_id, country_id,
-    education, experience, skills, social_media_links,
+    education, experience, skills, social_media_links, cv, description, avatar, email
   } = req.body;
 
   try {
@@ -32,7 +32,7 @@ export const updateProfile = async (req, res) => {
     // Cập nhật thông tin profile
     await applicantProfile.update({
       fullname, date_of_birth, phone, address, district_id, city_id, country_id,
-      education, experience, skills, social_media_links,
+      education, experience, skills, social_media_links, cv, description, avatar, email
     });
 
     res.status(200).json({ message: 'Profile updated successfully', profile: applicantProfile });
@@ -43,7 +43,7 @@ export const updateProfile = async (req, res) => {
 };
 
 export const getProfile = async (req, res) => {
-  const { userId } = req.params; // Lấy userId từ request params
+  const { userId } = req.user; // Lấy userId từ request params
 
   try {
     // Tìm kiếm hồ sơ ứng viên (ApplicantProfile) dựa trên userId
