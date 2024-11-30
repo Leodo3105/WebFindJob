@@ -21,14 +21,7 @@ const page = () => {
             // Lưu token vào localStorage
             localStorage.setItem("token", token);
     
-            // Kiểm tra xem tài khoản đã hoàn thiện thông tin hay chưa
-            if (!hasProfile) {
-                // Nếu chưa có thông tin, chuyển tới trang nhập hồ sơ
-                router.push("/complete-profile");
-            } else {
-                // Nếu đã hoàn thiện hồ sơ, chuyển đến trang chủ
-                router.push("/");
-            }
+            router.push("/");
         } catch (err) {
             // Xử lý lỗi và hiển thị thông báo
             setError(err.message || "Login failed. Please try again.");

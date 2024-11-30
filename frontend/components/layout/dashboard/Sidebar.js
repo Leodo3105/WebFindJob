@@ -48,6 +48,11 @@ function Sidebar({ isToggled, toggleTrueFalse }) {
             icon: <><Icon.UsersIcon /></>,
         },
         {
+            name: "Locations",
+            path: "locations",
+            icon: <><Icon.MapIcon /></>, 
+        },
+        {
             name: "Resumes",
             path: "/resumes",
             icon: <><Icon.QueueListIcon /></>
