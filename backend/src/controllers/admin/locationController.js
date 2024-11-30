@@ -164,7 +164,7 @@ export const deleteCity = async (req, res) => {
 export const getAllCities = async (_req, res) => {
   try {
     const cities = await City.findAll({
-      include: [{ model: Country, attributes: ['name'] }],
+      include: [{ model: Country, as: 'country', attributes: ['name'] }],
       order: [['name', 'ASC']],
     });
     res.status(200).json({ code: 'CITIES_RETRIEVED', message: 'Cities retrieved successfully', cities });
@@ -183,7 +183,7 @@ export const searchCities = async (req, res) => {
       where: {
         name: { [Op.iLike]: `%${name}%` },
       },
-      include: [{ model: Country, attributes: ['name'] }],
+      include: [{ model: Country, as: 'country', attributes: ['name'] }],
       order: [['name', 'ASC']],
     });
 
@@ -269,7 +269,7 @@ export const deleteDistrict = async (req, res) => {
 export const getAllDistricts = async (_req, res) => {
   try {
     const districts = await District.findAll({
-      include: [{ model: City, attributes: ['name'] }],
+      include: [{ model: City, as: 'city', attributes: ['name'] }],
       order: [['name', 'ASC']],
     });
     res.status(200).json({ code: 'DISTRICTS_RETRIEVED', message: 'Districts retrieved successfully', districts });
@@ -288,7 +288,7 @@ export const searchDistricts = async (req, res) => {
       where: {
         name: { [Op.iLike]: `%${name}%` },
       },
-      include: [{ model: City, attributes: ['name'] }],
+      include: [{ model: City, as: 'city', attributes: ['name'] }],
       order: [['name', 'ASC']],
     });
 

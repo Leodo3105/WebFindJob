@@ -119,32 +119,25 @@ export const login = async (req, res) => {
       return res.status(403).json({ message: 'Account is locked' });
     }
 
-    // Xác định trạng thái hồ sơ ứng viên
+    // Nếu user là applicant, lấy applicant_profile_id
     let applicantProfileId = null;
-    let hasProfile = false;
     if (user.role === 'applicant') {
       const applicantProfile = await ApplicantProfiles.findOne({ where: { user_id: user.id } });
       applicantProfileId = applicantProfile ? applicantProfile.id : null;
-      hasProfile = !!applicantProfile; // true nếu đã có hồ sơ, false nếu chưa
     }
 
-    // Tạo token JWT với thông tin cần thiết
+    // Tạo token JWT với applicant_profile_id (nếu có)
     const token = jwt.sign(
       {
         userId: user.id,
         role: user.role,
-        applicant_profile_id: applicantProfileId,
+        applicant_profile_id: applicantProfileId, // Thêm applicant_profile_id vào payload
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Trả về token và trạng thái hồ sơ
-    res.status(200).json({
-      message: 'Login successful',
-      token,
-      hasProfile, // Thêm trạng thái hồ sơ
-    });
+    res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'An error occurred during login', error });

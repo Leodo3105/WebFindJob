@@ -7,12 +7,15 @@ import jobRoutes from './src/routes/jobRoutes.js';
 import employerRoutes from './src/routes/employerRoutes.js';
 import applicantRoutes from './src/routes/applicantRoutes.js';
 import profileRoutes from './src/routes/profileRoutes.js';
+import associateModels from './src/models/associations.js';
 import { sync } from './src/config/db.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
+import './src/models/country.js';
+import './src/models/city.js';
+import './src/models/district.js';
 dotenv.config();
-
+associateModels();
 const app = express();
 app.use(json());
 

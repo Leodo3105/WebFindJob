@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import Country from './country.js';
+import District from './district.js';
 
 const City = sequelize.define('City', {
   name: {
@@ -20,7 +21,9 @@ const City = sequelize.define('City', {
   timestamps: false,
 });
 
-City.belongsTo(Country, { foreignKey: 'country_id', as: 'country' });
-Country.hasMany(City, { foreignKey: 'country_id', as: 'cities' });
+
+City.associate = () => {
+  City.belongsTo(Country, { foreignKey: 'countryId', as: 'country' });
+};
 
 export default City;
